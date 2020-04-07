@@ -6,8 +6,8 @@ type Map struct {
 	Blocked map[Coordinates]struct{}
 }
 
-func (m *Map) CheckFill(x int16, y int16) bool {
-	_, ok := m.Blocked[Coordinates{x, y}]
+func (m *Map) CheckBlocked(c Coordinates) bool {
+	_, ok := m.Blocked[c]
 
 	return ok
 }
@@ -22,7 +22,6 @@ type AStar struct {
 	From      Coordinates
 	To        Coordinates
 	vectorMap map[Coordinates]int
-	neighbour map[Coordinates]struct{}
 }
 
 func (a *AStar) FindPath() []Coordinates {
@@ -32,17 +31,15 @@ func (a *AStar) FindPath() []Coordinates {
 	if a.To.X >= a.Map.Width || a.To.Y >= a.Map.Height {
 		return make([]Coordinates, 0)
 	}
-	if a.Map.CheckFill(a.To.X, a.To.Y) {
+	if a.Map.CheckBlocked(a.To) {
 		return make([]Coordinates, 0)
 	}
-	if a.Map.CheckFill(a.From.X, a.From.Y) {
+	if a.Map.CheckBlocked(a.From) {
 		return make([]Coordinates, 0)
 	}
 
-	a.neighbour = make(map[Coordinates]struct{})
 	a.vectorMap = make(map[Coordinates]int)
 
-	a.neighbour[a.To] = struct{}{}
 	a.LoopFind()
 	a.vectorMap[a.To] = 0
 
@@ -68,19 +65,17 @@ func (a *AStar) FindPath() []Coordinates {
 
 func (a *AStar) LoopFind() {
 	i := 1
+	neighbour := map[Coordinates]struct{}{
+		a.To: {},
+	}
 	for {
-		if len(a.neighbour) == 0 {
+		if len(neighbour) == 0 {
 			break
 		}
 
 		tempNeighbour := make(map[Coordinates]struct{})
-		for coord := range a.neighbour {
+		for coord := range neighbour {
 			for _, c := range a.GetNeighbour(coord, false) {
-				_, ok := a.vectorMap[c]
-				if ok {
-					continue
-				}
-
 				a.vectorMap[c] = i
 				tempNeighbour[c] = struct{}{}
 				i++
@@ -90,7 +85,7 @@ func (a *AStar) LoopFind() {
 				}
 			}
 		}
-		a.neighbour = tempNeighbour
+		neighbour = tempNeighbour
 	}
 }
 
@@ -115,48 +110,60 @@ func (a *AStar) GetMinNeighbour(c Coordinates) (result Coordinates) {
 
 func (a *AStar) GetNeighbour(c Coordinates, diag bool) (neighbour []Coordinates) {
 	if c.X > 0 {
-		if !a.Map.CheckFill(c.X-1, c.Y) {
-			neighbour = append(neighbour, Coordinates{X: c.X - 1, Y: c.Y})
+		cord := Coordinates{X: c.X - 1, Y: c.Y}
+		_, ok := a.vectorMap[cord]
+		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
+			neighbour = append(neighbour, cord)
 		}
 	}
 	if c.Y > 0 {
-		if !a.Map.CheckFill(c.X, c.Y-1) {
-			neighbour = append(neighbour, Coordinates{X: c.X, Y: c.Y - 1})
+		cord := Coordinates{X: c.X, Y: c.Y - 1}
+		_, ok := a.vectorMap[cord]
+		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
+			neighbour = append(neighbour, cord)
 		}
 	}
 	if c.X < a.Map.Width-1 {
-		if !a.Map.CheckFill(c.X+1, c.Y) {
-			neighbour = append(neighbour, Coordinates{X: c.X + 1, Y: c.Y})
+		cord := Coordinates{X: c.X + 1, Y: c.Y}
+		_, ok := a.vectorMap[cord]
+		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
+			neighbour = append(neighbour, cord)
 		}
 	}
 	if c.Y < a.Map.Height-1 {
-		if !a.Map.CheckFill(c.X, c.Y+1) {
-			neighbour = append(neighbour, Coordinates{X: c.X, Y: c.Y + 1})
+		cord := Coordinates{X: c.X, Y: c.Y + 1}
+		_, ok := a.vectorMap[cord]
+		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
+			neighbour = append(neighbour, cord)
 		}
 	}
 
 	if diag {
 		if c.X > 0 && c.Y > 0 {
-			if !a.Map.CheckFill(c.X-1, c.Y-1) {
-				neighbour = append(neighbour, Coordinates{X: c.X - 1, Y: c.Y - 1})
+			cord := Coordinates{X: c.X - 1, Y: c.Y - 1}
+			if !a.Map.CheckBlocked(cord) {
+				neighbour = append(neighbour, cord)
 			}
 		}
 
 		if c.X < a.Map.Width-1 && c.Y < a.Map.Height-1 {
-			if !a.Map.CheckFill(c.X+1, c.Y+1) {
-				neighbour = append(neighbour, Coordinates{X: c.X + 1, Y: c.Y + 1})
+			cord := Coordinates{X: c.X + 1, Y: c.Y + 1}
+			if !a.Map.CheckBlocked(cord) {
+				neighbour = append(neighbour, cord)
 			}
 		}
 
 		if c.X > 0 && c.Y < a.Map.Height-1 {
-			if !a.Map.CheckFill(c.X-1, c.Y+1) {
-				neighbour = append(neighbour, Coordinates{X: c.X - 1, Y: c.Y + 1})
+			cord := Coordinates{X: c.X - 1, Y: c.Y + 1}
+			if !a.Map.CheckBlocked(cord) {
+				neighbour = append(neighbour, cord)
 			}
 		}
 
 		if c.X < a.Map.Width-1 && c.Y > 0 {
-			if !a.Map.CheckFill(c.X+1, c.Y-1) {
-				neighbour = append(neighbour, Coordinates{X: c.X + 1, Y: c.Y - 1})
+			cord := Coordinates{X: c.X + 1, Y: c.Y - 1}
+			if !a.Map.CheckBlocked(cord) {
+				neighbour = append(neighbour, cord)
 			}
 		}
 	}
