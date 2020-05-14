@@ -1,4 +1,4 @@
-package astar_go
+package astar
 
 import (
 	"fmt"
@@ -7,9 +7,9 @@ import (
 )
 
 type TestNo struct {
-	From   Coordinates
-	To     Coordinates
-	Fill   map[Coordinates]struct{}
+	From Coordinates
+	To   Coordinates
+	Fill map[Coordinates]struct{}
 }
 
 func TestNoPath(t *testing.T) {
@@ -23,9 +23,9 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case1 := TestNo{
-		From:   Coordinates{0, 0},
-		To:     Coordinates{99, 99},
-		Fill:   barier,
+		From: Coordinates{0, 0},
+		To:   Coordinates{99, 99},
+		Fill: barier,
 	}
 
 	cases["case1"] = case1
@@ -38,9 +38,9 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case2 := TestNo{
-		From:   Coordinates{99, 99},
-		To:     Coordinates{0, 0},
-		Fill:   barier,
+		From: Coordinates{99, 99},
+		To:   Coordinates{0, 0},
+		Fill: barier,
 	}
 
 	cases["case2"] = case2
@@ -53,9 +53,9 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case3 := TestNo{
-		From:   Coordinates{0, 0},
-		To:     Coordinates{99, 0},
-		Fill:   barier,
+		From: Coordinates{0, 0},
+		To:   Coordinates{99, 0},
+		Fill: barier,
 	}
 	cases["case3"] = case3
 
@@ -67,9 +67,9 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case4 := TestNo{
-		From:   Coordinates{0, 0},
-		To:     Coordinates{0, 99},
-		Fill:   barier,
+		From: Coordinates{0, 0},
+		To:   Coordinates{0, 99},
+		Fill: barier,
 	}
 
 	cases["case4"] = case4
@@ -86,9 +86,9 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case5 := TestNo{
-		From:   Coordinates{99, 99},
-		To:     Coordinates{99, 0},
-		Fill:   barier,
+		From: Coordinates{99, 99},
+		To:   Coordinates{99, 0},
+		Fill: barier,
 	}
 	cases["case5"] = case5
 
@@ -104,35 +104,35 @@ func TestNoPath(t *testing.T) {
 		}] = struct{}{}
 	}
 	case6 := TestNo{
-		From:   Coordinates{99, 99},
-		To:     Coordinates{0, 99},
-		Fill:   barier,
+		From: Coordinates{99, 99},
+		To:   Coordinates{0, 99},
+		Fill: barier,
 	}
 	cases["case6"] = case6
 
 	cases["case7"] = TestNo{
-		From:   Coordinates{100, 0},
-		To:     Coordinates{0, 0},
+		From: Coordinates{100, 0},
+		To:   Coordinates{0, 0},
 	}
 
 	cases["case8"] = TestNo{
-		From:   Coordinates{0, 100},
-		To:     Coordinates{0, 0},
+		From: Coordinates{0, 100},
+		To:   Coordinates{0, 0},
 	}
 
 	cases["case9"] = TestNo{
-		From:   Coordinates{99, 99},
-		To:     Coordinates{-1, 0},
+		From: Coordinates{99, 99},
+		To:   Coordinates{-1, 0},
 	}
 
 	cases["case10"] = TestNo{
-		From:   Coordinates{99, 99},
-		To:     Coordinates{-1, 0},
+		From: Coordinates{99, 99},
+		To:   Coordinates{-1, 0},
 	}
 
 	cases["case11"] = TestNo{
-		From:   Coordinates{50, 50},
-		To:     Coordinates{0, 0},
+		From: Coordinates{50, 50},
+		To:   Coordinates{0, 0},
 		Fill: map[Coordinates]struct{}{
 			Coordinates{
 				X: 50,
@@ -141,8 +141,8 @@ func TestNoPath(t *testing.T) {
 		},
 	}
 	cases["case12"] = TestNo{
-		From:   Coordinates{0, 0},
-		To:     Coordinates{50, 50},
+		From: Coordinates{0, 0},
+		To:   Coordinates{50, 50},
 		Fill: map[Coordinates]struct{}{
 			Coordinates{
 				X: 50,

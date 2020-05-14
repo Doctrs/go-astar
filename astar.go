@@ -1,4 +1,4 @@
-package astar_go
+package astar
 
 type Map struct {
 	Width   int16
@@ -65,16 +65,16 @@ func (a *AStar) FindPath() []Coordinates {
 
 func (a *AStar) LoopFind() {
 	i := 1
-	neighbour := map[Coordinates]struct{}{
+	neighbor := map[Coordinates]struct{}{
 		a.To: {},
 	}
 	for {
-		if len(neighbour) == 0 {
+		if len(neighbor) == 0 {
 			break
 		}
 
 		tempNeighbour := make(map[Coordinates]struct{})
-		for coord := range neighbour {
+		for coord := range neighbor {
 			for _, c := range a.GetNeighbour(coord, false) {
 				a.vectorMap[c] = i
 				tempNeighbour[c] = struct{}{}
@@ -85,7 +85,7 @@ func (a *AStar) LoopFind() {
 				}
 			}
 		}
-		neighbour = tempNeighbour
+		neighbor = tempNeighbour
 	}
 }
 
@@ -98,7 +98,7 @@ func (a *AStar) GetMinNeighbour(c Coordinates) (result Coordinates) {
 			continue
 		}
 
-		if i == true || a.vectorMap[e] < m {
+		if i || a.vectorMap[e] < m {
 			i = false
 			m = a.vectorMap[e]
 			result = e
@@ -108,33 +108,33 @@ func (a *AStar) GetMinNeighbour(c Coordinates) (result Coordinates) {
 	return result
 }
 
-func (a *AStar) GetNeighbour(c Coordinates, diag bool) (neighbour []Coordinates) {
+func (a *AStar) GetNeighbour(c Coordinates, diag bool) (coordinates []Coordinates) {
 	if c.X > 0 {
 		cord := Coordinates{X: c.X - 1, Y: c.Y}
 		_, ok := a.vectorMap[cord]
 		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
-			neighbour = append(neighbour, cord)
+			coordinates = append(coordinates, cord)
 		}
 	}
 	if c.Y > 0 {
 		cord := Coordinates{X: c.X, Y: c.Y - 1}
 		_, ok := a.vectorMap[cord]
 		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
-			neighbour = append(neighbour, cord)
+			coordinates = append(coordinates, cord)
 		}
 	}
 	if c.X < a.Map.Width-1 {
 		cord := Coordinates{X: c.X + 1, Y: c.Y}
 		_, ok := a.vectorMap[cord]
 		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
-			neighbour = append(neighbour, cord)
+			coordinates = append(coordinates, cord)
 		}
 	}
 	if c.Y < a.Map.Height-1 {
 		cord := Coordinates{X: c.X, Y: c.Y + 1}
 		_, ok := a.vectorMap[cord]
 		if !a.Map.CheckBlocked(cord) && (diag || !ok) {
-			neighbour = append(neighbour, cord)
+			coordinates = append(coordinates, cord)
 		}
 	}
 
@@ -142,31 +142,31 @@ func (a *AStar) GetNeighbour(c Coordinates, diag bool) (neighbour []Coordinates)
 		if c.X > 0 && c.Y > 0 {
 			cord := Coordinates{X: c.X - 1, Y: c.Y - 1}
 			if !a.Map.CheckBlocked(cord) {
-				neighbour = append(neighbour, cord)
+				coordinates = append(coordinates, cord)
 			}
 		}
 
 		if c.X < a.Map.Width-1 && c.Y < a.Map.Height-1 {
 			cord := Coordinates{X: c.X + 1, Y: c.Y + 1}
 			if !a.Map.CheckBlocked(cord) {
-				neighbour = append(neighbour, cord)
+				coordinates = append(coordinates, cord)
 			}
 		}
 
 		if c.X > 0 && c.Y < a.Map.Height-1 {
 			cord := Coordinates{X: c.X - 1, Y: c.Y + 1}
 			if !a.Map.CheckBlocked(cord) {
-				neighbour = append(neighbour, cord)
+				coordinates = append(coordinates, cord)
 			}
 		}
 
 		if c.X < a.Map.Width-1 && c.Y > 0 {
 			cord := Coordinates{X: c.X + 1, Y: c.Y - 1}
 			if !a.Map.CheckBlocked(cord) {
-				neighbour = append(neighbour, cord)
+				coordinates = append(coordinates, cord)
 			}
 		}
 	}
 
-	return neighbour
+	return coordinates
 }

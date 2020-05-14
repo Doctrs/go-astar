@@ -1,4 +1,4 @@
-package astar_go
+package astar
 
 import (
 	"fmt"
